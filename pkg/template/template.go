@@ -5,8 +5,10 @@ import (
 	"github.com/Masterminds/sprig"
 	"github.com/actano/vault-template/pkg/api"
 	"os"
+    "log"
 	"strings"
 	"text/template"
+    "gopkg.in/yaml.v2"
 )
 
 type VaultTemplateRenderer struct {
@@ -29,6 +31,8 @@ func (v *VaultTemplateRenderer) RenderTemplate(templateContent string) (string, 
 	funcMap := template.FuncMap{
 		"vault":    v.vaultClient.QuerySecret,
 		"vaultMap": v.vaultClient.QuerySecretMap,
+        "toYaml":   toYaml,
+        "fromYaml": fromYaml,
 	}
 
 	tmpl, err := template.
@@ -60,4 +64,22 @@ func envToMap() map[string]string {
 	}
 
 	return envMap
+}
+
+func toYaml(src interface{}) string {
+    data, err:= yaml.Marshal(src)
+    if err!=nil {
+        log.Print(err)
+        return ""
+    }
+    return strings.TrimSuffix(string(data), "\n")
+}
+
+func fromYaml(str string) map[string]interface{} {
+	m := map[string]interface{}{}
+
+	if err := yaml.Unmarshal([]byte(str), &m); err != nil {
+		m["Error"] = err.Error()
+	}
+	return m
 }

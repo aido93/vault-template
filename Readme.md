@@ -28,9 +28,11 @@ First of all, suppose that the secret was created with `vault write secret/mySec
 
 The templates will be rendered using the [Go template](https://golang.org/pkg/text/template/) mechanism.
 
-Currently vault-template can render two functions:
+Currently vault-template can render four functions:
 - `vault`
 - `vaultMap`
+- `toYaml`
+- `fromYaml`
 
 Also it is possible to use environment variables like `{{ .STAGE }}`.
 
